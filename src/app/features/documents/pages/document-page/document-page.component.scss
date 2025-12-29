@@ -1,0 +1,77 @@
+/* Title alignment*/
+.title-page {
+  width: 100%;
+  max-width: 55rem;
+}
+
+/* Title input without border and bold text */
+.title-input {
+  border: none;
+  background: transparent;
+  font-weight: bold;
+  padding: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Keep placeholder normal */
+.title-input::placeholder {
+  font-weight: normal;
+  color: #999;
+}
+
+.google-background {
+  background-color: #f1f3f4;
+}
+
+.document-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 4rem);
+  background-color: #f1f3f4;
+  align-items: center;
+}
+
+
+
+
+
+// /* Remove the block highlight */
+// .y-caret {
+//   background-color: transparent !important;
+//   position: relative;
+// }
+
+// /* The actual caret line */
+// .y-caret::after {
+//   content: '';
+//   position: absolute;
+//   left: 0;
+//   top: 0;
+//   width: 2px;
+//   height: 1.4em;
+//   background-color: var(--caret-color);
+//   pointer-events: none;
+// }
+
+// /* Caret label (username bubble) */
+// .y-caret .caret-label {
+//   position: absolute;
+//   top: -1.6em;
+//   left: -1px;
+//   background-color: var(--caret-color);
+//   color: white;
+//   padding: 2px 6px;
+//   font-size: 11px;
+//   font-weight: 500;
+//   border-radius: 4px;
+//   white-space: nowrap;
+//   pointer-events: none;
+// }
+
+// /* Optional: smooth animation */
+// .y-caret,
+// .y-caret::after {
+//   transition: all 0.15s ease;
+// }

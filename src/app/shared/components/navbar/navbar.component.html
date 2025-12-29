@@ -1,0 +1,18 @@
+<nav class="navbar navbar-light bg-light px-4 fixed-top">
+    <div class="container d-flex align-items-center justify-content-between">
+        <a class="navbar-brand fw-bold">Document Me</a>
+        <div class="dropdown">
+            <button class="bg-transparent border-0 p-0 d-flex align-items-center gap-2" id="profileDropdown"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+                    style="width: 2.25rem; aspect-ratio: 1; font-size: 0.85rem;">
+                    {{ initials }}
+                </div>
+                <span class="fw-semibold">{{ fullName }}</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                <li><button class="dropdown-item">Logout</button></li>
+            </ul>
+        </div>
+    </div>
+</nav>

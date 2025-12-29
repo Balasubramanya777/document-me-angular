@@ -1,0 +1,79 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background: #f3f4f6;
+    font-family: system-ui, sans-serif;
+    font-size: 16px; // root reference for rem
+}
+
+/* Center container */
+.auth-wrapper {
+    min-height: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+/* Card */
+.auth-card {
+    width: 100%;
+    max-width: 26rem; // ~416px but responsive because based on font-size
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.08);
+    display: grid;
+    row-gap: 1rem;
+}
+
+/* Text */
+.title {
+    margin: 0 0 0.5rem 0;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.label {
+    font-size: 1rem;
+    color: #374151;
+}
+
+/* Inputs */
+.input {
+    padding: 0.75rem 1rem;
+    border: 0.0625rem solid #d1d5db; // 1px in rem units
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+.input:focus {
+    border-color: #2563eb;
+}
+
+/* Button */
+.btn {
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: #2563eb;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn:active {
+    opacity: 0.9;
+}
+
+/* Responsive improvement for large screens */
+@media (min-width: 48rem) {
+    .auth-card {
+        padding: 2.5rem;
+        max-width: 30rem;
+    }
+}
