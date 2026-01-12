@@ -14,6 +14,7 @@ import * as Y from 'yjs';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 import { HocuspocusProvider } from '@hocuspocus/provider'
+import { HttpClient } from "@angular/common/http";
 
 
 
@@ -31,21 +32,45 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
 
     private ydoc!: Y.Doc;
     private provider!: HocuspocusProvider;
+    private pendingUpdates!: Uint8Array[];
+    private flushInterval!: number
 
     charCount: number = 0;
     wordCount: number = 0;
 
-    constructor(private cdr: ChangeDetectorRef) {
+    constructor(private cdr: ChangeDetectorRef, private http: HttpClient) {
     }
 
     ngOnInit(): void {
         this.ydoc = new Y.Doc();
+        this.pendingUpdates = []
+
+        this.ydoc.on('update', (update: Uint8Array, origin) => {
+            if (origin === this.provider) return;
+            this.pendingUpdates.push(update);
+        });
 
         this.provider = new HocuspocusProvider({
             url: 'ws://localhost:1234',
             name: 'demo-doc-me-1',
             document: this.ydoc
         });
+
+        this.flushInterval = setInterval(() => {
+            if (this.pendingUpdates.length === 0) return
+
+            const payload = {
+                documentId: 112233,
+                updates: this.pendingUpdates.map(u => this.uint8ToBase64(u))
+            }
+            
+            this.http.post('/api/update', payload).subscribe({
+                next: () => this.pendingUpdates = [],
+                error: err => {
+                    console.error('ZZZ Faieled');
+                }
+            });
+        }, 5000)
     }
 
     ngAfterViewInit(): void {
@@ -129,10 +154,27 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
     }
 
+    uint8ToBase64(bytes: Uint8Array): string {
+        let binary = '';
+        bytes.forEach(b => binary += String.fromCharCode(b))
+        return btoa(binary)
+    }
+
+    // base64ToUint8(base64: string): Uint8Array {
+    //     const binary = atob(base64)
+    //     const bytes = new Uint8Array(binary.length)
+    //     for (let i = 0; i < binary.length; i++) {
+    //         bytes[i] = binary.charCodeAt(i)
+    //     }
+    //     return bytes
+    // }
 
     ngOnDestroy(): void {
         this.editor?.destroy();
         this.provider?.destroy();
         this.ydoc?.destroy();
+        if (this.flushInterval) {
+            clearInterval(this.flushInterval)
+        }
     }
 }

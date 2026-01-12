@@ -2,15 +2,15 @@ import { Routes } from "@angular/router";
 
 export const DOCUMENTS_ROUTE: Routes = [
     {
-        path: '',
+        path: 'documents',
         loadComponent: () => import('./pages/document-list-page/document-list-page.component').then(m => m.DocumentListPage)
     },
     {
-        path: 'create',
+        path: 'documents/create',
         loadComponent: () => import('./pages/document-page/document-page.component').then(m => m.DocumentPage)
     },
     {
-        path: ':id/edit',
+        path: 'documents/:id/edit',
         loadComponent: () => import('./pages/document-page/document-page.component').then(m => m.DocumentPage)
     }
 ]

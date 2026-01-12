@@ -1,0 +1,14 @@
+<main class="auth-wrapper">
+    <form [formGroup]="form" (ngSubmit)="signIn()" class="auth-card" novalidate>
+        <h2 class="title">Sign In</h2>
+
+        <label class="label" for="username">Username</label>
+        <input id="username" formControlName="username" type="text" placeholder="Enter your username" class="input" />
+
+        <label class="label" for="password">Password</label>
+        <input id="password" formControlName="password" type="password" placeholder="Enter your password"
+            class="input" />
+
+        <button type="submit" class="btn" [disabled]="form.invalid">Sign In</button>
+    </form>
+</main>

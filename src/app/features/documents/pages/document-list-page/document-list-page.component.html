@@ -1,1 +1,28 @@
-<p> This is document list with table, pagination and filter</p>
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Last Seen</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (document of documents$ | async; track document.documentId) {
+        <tr>
+          <td>{{ document.title }}</td>
+          <td>{{ document.lastSeenAt }}</td>
+          <td>
+            <button type="button"><i class="bi bi-pencil"></i></button>
+            <button type="button"><i class="bi bi-eye"></i></button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="3">No records found</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
