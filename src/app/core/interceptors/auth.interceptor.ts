@@ -1,25 +1,24 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { inject, Injectable } from "@angular/core";
+import { Router } from "@angular/router";
+import { catchError, Observable, throwError } from "rxjs";
 
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
+    private router = inject(Router)
+
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const accessToken = localStorage.getItem('access_token');
+        const authRequest = req.clone({ withCredentials: true });
 
-        if (!accessToken) {
-            return next.handle(req);
-        }
-
-        const authRequest = req.clone({
-            setHeaders: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        });
-        
-        return next.handle(authRequest);
+        return next.handle(authRequest).pipe(
+            catchError((err: HttpErrorResponse) => {
+                if (err.status === 401) {
+                    this.router.navigate(['/auth/sign-in']);
+                }
+                return throwError(() => err);
+            })
+        );
     }
-
 }
