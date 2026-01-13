@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../../services/auth.service";
 import { SignInRequest } from "../../models/auth.models";
@@ -13,15 +13,14 @@ import { Router } from "@angular/router";
 })
 export class SignInPage {
 
-    form!: FormGroup;
+    private fb = inject(FormBuilder);
+    private authService = inject(AuthService);
+    private router = inject(Router);
 
-    constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
-
-        this.form = this.fb.group({
-            username: ['', [Validators.required]],
-            password: ['', [Validators.required]]
-        });
-    }
+    form: FormGroup = this.fb.group({
+        username: ['', [Validators.required]],
+        password: ['', [Validators.required]],
+    });
 
     signIn() {
         if (this.form.invalid) return;
@@ -29,6 +28,7 @@ export class SignInPage {
         const credentials: SignInRequest = this.form.value;
         this.authService.signIn(credentials).subscribe({
             next: (response) => {
+                console.log(response)
                 this.router.navigate(['/documents']);
             },
             error: (err) => {

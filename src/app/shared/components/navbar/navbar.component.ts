@@ -1,4 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { AuthService } from "../../../features/auth/services/auth.service";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'nav-bar',
@@ -11,6 +13,9 @@ export class NavBar {
     fullName = "N Balasubramanya";
     initials = "";
 
+    private authService = inject(AuthService);
+    private router = inject(Router);
+
     constructor() {
         this.initials = this.getInitials(this.fullName);
     }
@@ -22,4 +27,13 @@ export class NavBar {
         }
         return name.substring(0, 2).toUpperCase();
     }
+
+    logout() {
+        this.authService.logout().subscribe({
+            next: () => {
+                this.router.navigate(['/auth/sign-in']);
+            }
+        });
+    }
+
 }
