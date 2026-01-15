@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Tooltip } from 'bootstrap';
 
@@ -14,7 +14,7 @@ import * as Y from 'yjs';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 import { HocuspocusProvider } from '@hocuspocus/provider'
-import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
 
 
 
@@ -38,8 +38,8 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
     charCount: number = 0;
     wordCount: number = 0;
 
-    constructor(private cdr: ChangeDetectorRef, private http: HttpClient) {
-    }
+    private route = inject(Router);
+    private cdr = inject(ChangeDetectorRef);
 
     ngOnInit(): void {
         this.ydoc = new Y.Doc();
@@ -64,12 +64,12 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
                 updates: this.pendingUpdates.map(u => this.uint8ToBase64(u))
             }
             
-            this.http.post('/api/update', payload).subscribe({
-                next: () => this.pendingUpdates = [],
-                error: err => {
-                    console.error('ZZZ Faieled');
-                }
-            });
+            // this.http.post('/api/update', payload).subscribe({
+            //     next: () => this.pendingUpdates = [],
+            //     error: err => {
+            //         console.error('ZZZ Faieled');
+            //     }
+            // });
         }, 5000)
     }
 
@@ -176,5 +176,9 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         if (this.flushInterval) {
             clearInterval(this.flushInterval)
         }
+    }
+
+    goBack(){
+        this.route.navigate(['/documents']);
     }
 }

@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { AuthService } from "../../services/auth.service";
 import { SignInRequest } from "../../models/auth.models";
 import { Router } from "@angular/router";
+import { ApiResponse } from "../../models/api.response.model";
+import { UserDto } from "../../models/user.model";
 
 @Component({
     selector: 'sign-in-page',
@@ -27,8 +29,8 @@ export class SignInPage {
 
         const credentials: SignInRequest = this.form.value;
         this.authService.signIn(credentials).subscribe({
-            next: (response) => {
-                console.log(response)
+            next: (response: ApiResponse<UserDto>) => {
+                this.authService.setUser(response.data);
                 this.router.navigate(['/documents']);
             },
             error: (err) => {
