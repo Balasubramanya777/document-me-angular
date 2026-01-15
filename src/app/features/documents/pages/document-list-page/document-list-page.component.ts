@@ -4,6 +4,7 @@ import { ApiResponse } from "../../../auth/models/api.response.model";
 import { DocumentUserDto } from "../../models/document.models";
 import { CommonModule } from "@angular/common";
 import { catchError, map, of, shareReplay } from 'rxjs';
+import { Router } from "@angular/router";
 
 
 @Component({
@@ -16,18 +17,21 @@ import { catchError, map, of, shareReplay } from 'rxjs';
 export class DocumentListPage {
 
     private documentService = inject(DocumentService);
+    private route = inject(Router);
 
     readonly documents$ = this.documentService.getDocuments().pipe(
         map((res: ApiResponse<DocumentUserDto[]>) => {
             if (res.success) {
                 return res.data
             }
-            console.error('API error:', res.message);
             return [];
         }),
         catchError(err => {
-            console.error('HTTP error:', err);
             return of([] as DocumentUserDto[]);
         })
     );
+
+    createDoc(){
+        this.route.navigate(['/documents/create']);
+    }
 }

@@ -6,9 +6,9 @@
                 data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
                     style="width: 2.25rem; aspect-ratio: 1; font-size: 0.85rem;">
-                    {{ initials }}
+                    {{ initials$ | async }}
                 </div>
-                <span class="fw-semibold">{{ fullName }}</span>
+                <span class="fw-semibold">{{ fullName$ | async }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                 <li (click)="logout()"><button class="dropdown-item">Logout</button></li>
