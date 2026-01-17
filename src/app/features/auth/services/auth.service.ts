@@ -16,6 +16,13 @@ export class AuthService {
   private userSubject = new BehaviorSubject<UserDto | null>(null);
   user$ = this.userSubject.asObservable();
 
+  constructor(){
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.userSubject.next(JSON.parse(storedUser));
+    }
+  }
+
   signIn(credentials: SignInRequest): Observable<ApiResponse<UserDto>> {
     return this.http
       .post<ApiResponse<UserDto>>(`${this.baseUrl}/authenticate`, credentials)
@@ -39,15 +46,13 @@ export class AuthService {
     return this.session$;
   }
 
-  clearSession() {
-    this.session$ = undefined;
-  }
-
   setUser(user: UserDto) {
     this.userSubject.next(user);
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   clearUser() {
     this.userSubject.next(null);
+    localStorage.removeItem('user');
   }
 }

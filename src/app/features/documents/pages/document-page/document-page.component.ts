@@ -1,6 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Tooltip } from 'bootstrap';
 
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
@@ -74,10 +73,6 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
-
-        //Tooltip
-        const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.forEach(el => new Tooltip(el));
 
         //Tiptap
         this.editor = new Editor({
@@ -178,7 +173,7 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    goBack(){
+    back(){
         this.route.navigate(['/documents']);
     }
 }

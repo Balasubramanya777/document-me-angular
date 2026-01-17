@@ -4,11 +4,15 @@ import { Router } from "@angular/router";
 import { map, Observable } from "rxjs";
 import { UserDto } from "../../../features/auth/models/user.model";
 import { CommonModule } from "@angular/common";
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+
 
 @Component({
     selector: 'nav-bar',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, MatToolbarModule, MatButtonModule, MatMenuModule],
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.scss']
 })
