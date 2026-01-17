@@ -1,34 +1,17 @@
 <div class="document-page-wrapper d-flex flex-column align-items-center google-background">
 
-  <div
-    class="d-flex align-items-center justify-content-between gap-2 shadow-sm px-4 title-page my-1 py-2 bg-white rounded">
+  <div class="position-relative w-100 my-3 px-4 d-flex justify-content-center align-items-center">
 
-    <input #titleInput type="text" class="form-control text-truncate flex-grow-1 me-2 title-input"
-      placeholder="Title" />
+    <button (click)="back()" title="Back"
+      class="btn btn-outline-danger rounded-circle btn-sm d-flex align-items-center justify-content-center position-absolute start-0 ms-4">
+      <i class="bi bi-arrow-left fs-6"></i>
+    </button>
 
-    <div class="d-flex gap-2 flex-shrink-0">
-      <button data-bs-toggle="tooltip" title="Back"
-        class="btn btn-outline-danger rounded-circle btn-sm d-flex align-items-center justify-content-center">
-        <i class="bi bi-arrow-left fs-6"></i>
-      </button>
-
-      <button data-bs-toggle="tooltip" title="Share"
-        class="btn btn-outline-success rounded-circle btn-sm d-flex align-items-center justify-content-center">
-        <i class="bi bi-share fs-6"></i>
-      </button>
-
-      <button data-bs-toggle="tooltip" title="Save"
-        class="btn btn-outline-primary rounded-circle btn-sm d-flex align-items-center justify-content-center">
-        <i class="bi bi-save fs-6"></i>
-      </button>
+    <div class="shadow-sm px-4 py-2 bg-white rounded title-page d-flex" style="width: 60%;">
+      <input #titleInput type="text" class="form-control text-truncate title-input" placeholder="Title" />
     </div>
 
   </div>
-
-  <!-- <div class="col-12 col-md-11 col-lg-7">
-    <div #editor></div>
-  </div> -->
-
 
   <div class="container-fluid px-0">
 
@@ -79,7 +62,4 @@
     <div #editor class="editor"></div>
   </div>
 
-
 </div>
-
-<button (click)="goBack()">Back</button>
