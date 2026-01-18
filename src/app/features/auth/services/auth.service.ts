@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { SignInRequest } from "../models/auth.models";
+import { SignInRequest, SignUpRequest } from "../models/auth.models";
 import { Observable } from "rxjs/internal/Observable";
 import { environment } from "../../../../environments/environment";
 import { ApiResponse } from "../models/api.response.model";
@@ -26,6 +26,11 @@ export class AuthService {
   signIn(credentials: SignInRequest): Observable<ApiResponse<UserDto>> {
     return this.http
       .post<ApiResponse<UserDto>>(`${this.baseUrl}/authenticate`, credentials)
+  }
+
+  signUp(credentials: SignUpRequest): Observable<ApiResponse<boolean>> {
+    return this.http
+      .post<ApiResponse<boolean>>(`${this.baseUrl}`, credentials)
   }
 
   logout() {

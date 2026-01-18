@@ -10,5 +10,10 @@
             class="input" />
 
         <button type="submit" class="btn" [disabled]="form.invalid">Sign In</button>
+
+        <p class="text-center">
+            Don’t have an account?
+            <a routerLink="/auth/sign-up" class="link">Sign Up</a>
+        </p>
     </form>
 </main>
