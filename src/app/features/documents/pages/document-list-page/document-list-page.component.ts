@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { DocumentService } from "../../services/document.service";
 import { ApiResponse } from "../../../auth/models/api.response.model";
-import { DocumentUserDto } from "../../models/document.models";
+import { DocumentUpsertDto, DocumentUserDto } from "../../models/document.models";
 import { CommonModule } from "@angular/common";
 import { catchError, map, of } from 'rxjs';
 import { Router } from "@angular/router";
@@ -20,8 +20,6 @@ export class DocumentListPage {
     private documentService = inject(DocumentService);
     private route = inject(Router);
 
-    
-
     readonly documents$ = this.documentService.getDocuments().pipe(
         map((res: ApiResponse<DocumentUserDto[]>) => {
             if (res.success) {
@@ -35,8 +33,16 @@ export class DocumentListPage {
     );
 
     create() {
-        this.route.navigate(['/documents/create']);
+        this.documentService.upsertDocument().subscribe({
+            next: (res: ApiResponse<DocumentUpsertDto>) => {
+                if (res.success) {
+                    this.route.navigate(['/documents', res.data.documentId]);
+                }
+            }
+        })
     }
 
-    
+    edit(documentId: number) {
+        this.route.navigate(['/documents', documentId]);
+    }
 }

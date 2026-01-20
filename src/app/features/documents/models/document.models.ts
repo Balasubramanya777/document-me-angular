@@ -11,3 +11,14 @@ export interface DocumentUserDto {
     lastSeenAt: string
     user?: UserDto;
 }
+
+export interface ContentCreateDto {
+    documentId: number
+    updates: string[]
+}
+
+export interface ContentDto{
+    documentId: number
+    title: string
+    updates: string[]
+}

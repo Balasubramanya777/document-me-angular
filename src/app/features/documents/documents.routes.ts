@@ -6,11 +6,7 @@ export const DOCUMENTS_ROUTE: Routes = [
         loadComponent: () => import('./pages/document-list-page/document-list-page.component').then(m => m.DocumentListPage)
     },
     {
-        path: 'documents/create',
-        loadComponent: () => import('./pages/document-page/document-page.component').then(m => m.DocumentPage)
-    },
-    {
-        path: 'documents/:id/edit',
+        path: 'documents/:id',
         loadComponent: () => import('./pages/document-page/document-page.component').then(m => m.DocumentPage)
     }
 ]
