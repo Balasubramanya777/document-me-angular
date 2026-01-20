@@ -7,16 +7,17 @@
       <i class="bi bi-arrow-left fs-6"></i>
     </button>
 
-    <div class="shadow-sm px-4 py-2 bg-white rounded title-page d-flex" style="width: 60%;">
-      <input #titleInput type="text" class="form-control text-truncate title-input" placeholder="Title" />
+    <div [formGroup]="form" class="shadow-sm px-4 py-2 bg-white rounded title-page d-flex" style="width: 60%;">
+      <input #titleInput type="text" class="form-control text-truncate title-input" placeholder="Title"
+        formControlName="title" />
     </div>
+
 
   </div>
 
-  <div class="container-fluid px-0">
+  <div class="container-fluid px-0" style="width: 60%;">
 
     <div class="toolbar d-flex flex-wrap align-items-center gap-1 p-2 border rounded mb-2 bg-light">
-      <!-- Text formatting -->
       <button class="btn btn-sm btn-outline-secondary" [class.active]="isActive('bold')" (click)="toggleBold()"
         title="Bold">
         <i class="bi bi-type-bold"></i>
@@ -44,7 +45,6 @@
 
       <div class="vr mx-1"></div>
 
-      <!-- Lists -->
       <button class="btn btn-sm btn-outline-secondary" (click)="toggleBulletList()" title="Bullet List">
         <i class="bi bi-list-ul"></i>
       </button>
@@ -53,13 +53,12 @@
         <i class="bi bi-list-ol"></i>
       </button>
 
-      <!-- Push character count to right -->
       <div class="ms-auto small text-muted">
         {{ charCount }} chars • {{ wordCount }} words
       </div>
     </div>
 
-    <div #editor class="editor"></div>
+    <div #editor class="editor bg-white"></div>
   </div>
 
 </div>

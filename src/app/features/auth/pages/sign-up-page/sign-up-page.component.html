@@ -1,16 +1,19 @@
 <main class="auth-wrapper">
-    <form class="auth-card" novalidate>
+    <form [formGroup]="form" (ngSubmit)="signUp()" class="auth-card" novalidate>
         <h2 class="title">Sign Up</h2>
 
-        <label class="label" for="email">Email</label>
-        <input id="email" type="email" placeholder="Enter your email" class="input" />
+         <label class="label" for="username">User Name</label>
+        <input id="username" formControlName="username" type="text" placeholder="Enter your username" class="input" />
+
+         <label class="label" for="firstName">First Name</label>
+        <input id="firstName" formControlName="firstName" type="text" placeholder="Enter your first name" class="input" />
+
+         <label class="label" for="lastName">Last Name</label>
+        <input id="lastName" formControlName="lastName" type="text" placeholder="Enter your last name" class="input" />
 
         <label class="label" for="password">Password</label>
-        <input id="password" type="password" placeholder="Create a password" class="input" />
+        <input id="password" formControlName="password" type="password" placeholder="Create a password" class="input" />
 
-        <label class="label" for="confirm">Re-enter Password</label>
-        <input id="confirm" type="password" placeholder="Re-enter password" class="input" />
-
-        <button type="submit" class="btn">Sign Up</button>
+        <button type="submit" class="btn" [disabled]="form.invalid">Sign Up</button>
     </form>
 </main>

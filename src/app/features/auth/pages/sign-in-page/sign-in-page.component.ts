@@ -2,14 +2,14 @@ import { Component, inject } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../../services/auth.service";
 import { SignInRequest } from "../../models/auth.models";
-import { Router } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { ApiResponse } from "../../models/api.response.model";
 import { UserDto } from "../../models/user.model";
 
 @Component({
     selector: 'sign-in-page',
     standalone: true,
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, RouterModule],
     templateUrl: './sign-in-page.component.html',
     styleUrls: ['sign-in-page.component.scss']
 })

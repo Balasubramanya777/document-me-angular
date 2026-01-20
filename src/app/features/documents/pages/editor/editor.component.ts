@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
@@ -13,23 +13,15 @@ import * as Y from 'yjs';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 import { HocuspocusProvider } from '@hocuspocus/provider'
-import { ActivatedRoute, Router } from "@angular/router";
-import { EditorComponent } from "../editor/editor.component";
-import { DocumentService } from "../../services/document.service";
-import { take } from "rxjs";
-import { ContentCreateDto, ContentDto } from "../../models/document.models";
-import { ApiResponse } from "../../../auth/models/api.response.model";
-
-
+import { Router } from "@angular/router";
 
 @Component({
-    selector: 'document-page',
+    selector: 'editor',
     standalone: true,
-    imports: [FormsModule, EditorComponent, ReactiveFormsModule],
-    templateUrl: './document-page.component.html',
-    styleUrls: ['./document-page.component.scss']
+    // imports: [FormsModule],
+    templateUrl: './editor.component.html'
 })
-export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
+export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('editor') editorEl!: ElementRef<HTMLDivElement>;
     editor!: Editor;
@@ -38,77 +30,43 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
     private provider!: HocuspocusProvider;
     private pendingUpdates!: Uint8Array[];
     private flushInterval!: number
-    private documentId!: number;
 
     charCount: number = 0;
     wordCount: number = 0;
 
-    private activatedRoute = inject(ActivatedRoute)
     private route = inject(Router);
     private cdr = inject(ChangeDetectorRef);
-    private documentService = inject(DocumentService);
-    private fb = inject(FormBuilder);
-
-    form: FormGroup = this.fb.group({
-        documentId: ['', [Validators.required]],
-        title: ['', [Validators.required]],
-    });
 
     ngOnInit(): void {
-        const idParam = this.activatedRoute.snapshot.paramMap.get('id');
-        if (!idParam) {
-            console.error("No idddd");
-            this.route.navigate(['/documents']);
-            return;
-        }
-
-        this.documentId = Number(idParam);
         this.ydoc = new Y.Doc();
         this.pendingUpdates = []
-
-        this.provider = new HocuspocusProvider({
-            url: 'ws://localhost:1234',
-            name: `doc-me-${this.documentId}`,
-            document: this.ydoc
-        });
 
         this.ydoc.on('update', (update: Uint8Array, origin) => {
             if (origin === this.provider) return;
             this.pendingUpdates.push(update);
         });
 
-
-        this.documentService.getContent(this.documentId).subscribe({
-            next: (res: ApiResponse<ContentDto>) => {
-                if (res.success) {
-                    this.form.setValue({
-                        documentId: res.data.documentId,
-                        title: res.data.title
-                    });
-
-                    res.data.updates.forEach(arr => {
-                        const binary = Uint8Array.from(atob(arr), x => x.charCodeAt(0));
-                        Y.applyUpdate(this.ydoc, binary);
-                    });
-                }
-            }
-        })
+        this.provider = new HocuspocusProvider({
+            url: 'ws://localhost:1234',
+            name: 'demo-doc-me-1',
+            document: this.ydoc
+        });
 
         this.flushInterval = setInterval(() => {
             if (this.pendingUpdates.length === 0) return
 
-            const payload: ContentCreateDto = {
-                documentId: this.documentId,
+            const payload = {
+                documentId: 112233,
                 updates: this.pendingUpdates.map(u => this.uint8ToBase64(u))
             }
 
-            this.documentService.createContent(payload).subscribe({
-                next: () => this.pendingUpdates = [],
-                error: err => {
-                    console.error('ZZZ Faieled');
-                }
-            });
-        }, 10000)
+            // this.http.post('/api/update', payload).subscribe({
+            //     next: () => this.pendingUpdates = [],
+            //     error: err => {
+            //         console.error('ZZZ Faieled');
+            //     }
+            // });
+        }, 5000)
     }
 
     ngAfterViewInit(): void {
@@ -194,6 +152,15 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         return btoa(binary)
     }
 
+    // base64ToUint8(base64: string): Uint8Array {
+    //     const binary = atob(base64)
+    //     const bytes = new Uint8Array(binary.length)
+    //     for (let i = 0; i < binary.length; i++) {
+    //         bytes[i] = binary.charCodeAt(i)
+    //     }
+    //     return bytes
+    // }
+
     ngOnDestroy(): void {
         this.editor?.destroy();
         this.provider?.destroy();
@@ -203,7 +170,4 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    back() {
-        this.route.navigate(['/documents']);
-    }
 }
