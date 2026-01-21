@@ -1,79 +1,121 @@
-:host {
-    display: block;
-    min-height: 100vh;
-    background: #f3f4f6;
-    font-family: system-ui, sans-serif;
-    //   font-size: 16px; // root reference for rem
-}
-
-/* Center container */
 .auth-wrapper {
-    min-height: inherit;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
+    min-height: 100vh !important;
+    height: 100vh !important;
+    background: linear-gradient(135deg,
+            #1e3a8a 0%,
+            #3b82f6 30%,
+            #1d4ed8 60%,
+            #1e40af 100%) !important;
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 2rem 1rem;
 }
 
-/* Card */
 .auth-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
     width: 100%;
-    max-width: 26rem; // ~416px but responsive because based on font-size
-    background: #ffffff;
-    padding: 2rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.08);
-    display: grid;
-    row-gap: 1rem;
+    max-width: 420px;
+    margin: 0 auto;
+    /* Ensures perfect centering */
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.6s ease;
 }
 
-/* Text */
+
 .title {
-    margin: 0 0 0.5rem 0;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 800;
+    // RESTORED: Original blue gradient highlight
+    background: linear-gradient(135deg, #60a5fa, #3b82f6, #1d4ed8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     text-align: center;
-    font-size: 1.5rem;
-    font-weight: 600;
+    margin-bottom: 2rem;
+    letter-spacing: -0.025em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .label {
-    font-size: 1rem;
-    color: #374151;
-}
-
-/* Inputs */
-.input {
-    padding: 0.75rem 1rem;
-    border: 0.0625rem solid #d1d5db; // 1px in rem units
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    outline: none;
-}
-
-.input:focus {
-    border-color: #2563eb;
-}
-
-/* Button */
-.btn {
-    margin-top: 0.5rem;
-    padding: 0.75rem 1rem;
-    border: none;
-    border-radius: 0.5rem;
-    background: #2563eb;
-    color: white;
-    font-size: 1.1rem;
+    display: block;
     font-weight: 600;
+    color: #1e3a8a !important; // Dark blue on semi-transparent white
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.025em;
+}
+
+.input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    color: #1e3a8a !important;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &::placeholder {
+        color: rgba(30, 58, 138, 0.6);
+    }
+
+    &:focus {
+        border-color: #3b82f6;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    }
+}
+
+.text-center {
+    color: #1e3a8a;
+}
+
+.link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+        color: #1d4ed8;
+    }
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    /* Limits button width */
+    margin: 1.5rem auto 1.25rem;
+    /* Centers the button perfectly */
+    padding: 1.125rem 2rem;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    /* Blue background */
+    color: #ffffff !important;
+    /* White text */
+    border: none;
+    border-radius: 16px;
+    font-size: 1.05rem;
+    font-weight: 700;
     cursor: pointer;
-}
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-.btn:active {
-    opacity: 0.9;
-}
+    &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        /* Lighter blue on hover */
+        transform: translateY(-2px);
+        box-shadow: 0 20px 40px rgba(59, 130, 246, 0.5);
+    }
 
-/* Responsive improvement for large screens */
-@media (min-width: 48rem) {
-    .auth-card {
-        padding: 2.5rem;
-        max-width: 30rem;
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
     }
 }
