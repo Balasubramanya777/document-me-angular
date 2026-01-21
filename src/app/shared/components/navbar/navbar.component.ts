@@ -7,12 +7,13 @@ import { CommonModule } from "@angular/common";
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
     selector: 'nav-bar',
     standalone: true,
-    imports: [CommonModule, MatToolbarModule, MatButtonModule, MatMenuModule],
+    imports: [CommonModule, MatToolbarModule, MatButtonModule, MatMenuModule, MatIconModule],
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.scss']
 })
@@ -26,6 +27,7 @@ export class NavBar {
     fullName$ = this.user$.pipe(map(user => user ? `${user.firstName} ${user.lastName}` : 'Unknown User'));
 
     logout() {
+        console.log("zz")
         this.authService.logout().subscribe({
             next: () => {
                 this.authService.clearUser();
