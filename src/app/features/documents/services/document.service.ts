@@ -35,8 +35,4 @@ export class DocumentService {
         return this.http
             .get<ApiResponse<ContentDto>>(`${this.baseUrl}/content/${documentId}`);
     }
-
-    setTitle(title: string) {
-        this.titleSubject.next(title);
-    }
 }

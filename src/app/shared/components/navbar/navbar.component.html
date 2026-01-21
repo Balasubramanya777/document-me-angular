@@ -1,4 +1,4 @@
-<mat-toolbar style="background-color: #0000CD;" class="px-4 fixed-top">
+<!-- <mat-toolbar style="background-color: #0000CD;" class="px-4 fixed-top">
     <div class="container d-flex align-items-center justify-content-between w-100">
 
         <span class="navbar-brand fw-bold text-white">Document Me</span>
@@ -16,5 +16,49 @@
             <button mat-menu-item (click)="logout()">Logout</button>
         </mat-menu>
 
+    </div>
+</mat-toolbar> -->
+
+
+<mat-toolbar class="gradient-toolbar fixed-top px-3 px-lg-4 shadow-lg">
+    <div class="container-fluid d-flex align-items-center justify-content-between w-100 h-100">
+
+        <!-- Animated Brand -->
+        <span class="navbar-brand fw-bold fs-4 fs-md-3 brand-highlight">
+            Document Me
+        </span>
+
+        <!-- Profile Section -->
+        <button [matMenuTriggerFor]="profileMenu"
+            class="btn-profile d-flex align-items-center gap-2 p-2 border-0 bg-transparent text-white rounded-pill shadow-sm"
+            type="button">
+            <div class="avatar rounded-circle d-flex align-items-center justify-content-center text-nowrap fw-bold">
+                {{ initials$ | async }}
+            </div>
+            <div class="d-none d-md-flex flex-column align-items-start text-start">
+                <span class="fw-semibold text-nowrap pe-3">{{ fullName$ | async }}</span>
+            </div>
+            <i class="fas fa-chevron-down ms-1 opacity-75"></i>
+        </button>
+
+        <!-- Enhanced Profile Menu -->
+        <mat-menu #profileMenu="matMenu" class="profile-menu shadow-lg border-0 rounded-4 overflow-hidden"
+            xPosition="before" yPosition="below">
+            <div class="p-3 pb-2 border-bottom">
+                <div class="d-flex align-items-center gap-3">
+                    <div
+                        class="avatar-menu rounded-circle d-flex align-items-center justify-content-center bg-primary text-white fw-bold">
+                        {{ initials$ | async }}
+                    </div>
+                    <div>
+                        <div class="fw-semibold">{{ fullName$ | async }}</div>
+                    </div>
+                </div>
+            </div>
+            <button mat-menu-item class="profile-item px-3 py-2 border-top" (click)="logout()">
+                <mat-icon class="me-2 text-danger">logout</mat-icon>
+                <span class="text-danger fw-semibold">Sign Out</span>
+            </button>
+        </mat-menu>
     </div>
 </mat-toolbar>
