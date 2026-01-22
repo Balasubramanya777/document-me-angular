@@ -19,13 +19,16 @@ import { DocumentService } from "../../services/document.service";
 import { take } from "rxjs";
 import { ContentCreateDto, ContentDto } from "../../models/document.models";
 import { ApiResponse } from "../../../auth/models/api.response.model";
+import { MatIconModule } from "@angular/material/icon";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatDividerModule } from '@angular/material/divider';
 
 
 
 @Component({
     selector: 'document-page',
     standalone: true,
-    imports: [FormsModule, EditorComponent, ReactiveFormsModule],
+    imports: [FormsModule, EditorComponent, ReactiveFormsModule, MatIconModule, MatToolbarModule, MatDividerModule],
     templateUrl: './document-page.component.html',
     styleUrls: ['./document-page.component.scss']
 })
@@ -94,21 +97,21 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
             }
         })
 
-        this.flushInterval = setInterval(() => {
-            if (this.pendingUpdates.length === 0) return
+        // this.flushInterval = setInterval(() => {
+        //     if (this.pendingUpdates.length === 0) return
 
-            const payload: ContentCreateDto = {
-                documentId: this.documentId,
-                updates: this.pendingUpdates.map(u => this.uint8ToBase64(u))
-            }
+        //     const payload: ContentCreateDto = {
+        //         documentId: this.documentId,
+        //         updates: this.pendingUpdates.map(u => this.uint8ToBase64(u))
+        //     }
 
-            this.documentService.createContent(payload).subscribe({
-                next: () => this.pendingUpdates = [],
-                error: err => {
-                    console.error('ZZZ Faieled');
-                }
-            });
-        }, 10000)
+        //     this.documentService.createContent(payload).subscribe({
+        //         next: () => this.pendingUpdates = [],
+        //         error: err => {
+        //             console.error('ZZZ Faieled');
+        //         }
+        //     });
+        // }, 10000)
     }
 
     ngAfterViewInit(): void {
@@ -205,5 +208,16 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
 
     back() {
         this.route.navigate(['/documents']);
+    }
+
+    focusEditor(event: MouseEvent) {
+        event.stopPropagation();
+        if (this.editor) {
+            this.editor.chain().focus().run();
+        } else {
+            // Fallback if editor not initialized yet
+            const proseMirror = this.editorEl.nativeElement.querySelector('.ProseMirror') as HTMLElement;
+    proseMirror?.focus();
+        }
     }
 }
