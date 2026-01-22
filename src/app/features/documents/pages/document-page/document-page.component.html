@@ -1,23 +1,25 @@
-<div class="document-page-wrapper d-flex flex-column align-items-center google-background">
+<div class="d-flex flex-column align-items-center google-background mt-3">
 
   <div class="position-relative w-100 my-3 px-4 d-flex justify-content-center align-items-center">
-
     <button (click)="back()" title="Back"
       class="btn btn-outline-danger rounded-circle btn-sm d-flex align-items-center justify-content-center position-absolute start-0 ms-4">
       <i class="bi bi-arrow-left fs-6"></i>
     </button>
 
     <div [formGroup]="form" class="shadow-sm px-4 py-2 bg-white rounded title-page d-flex" style="width: 60%;">
-      <input #titleInput type="text" class="form-control text-truncate title-input" placeholder="Title"
+      <input #titleInput type="text" class="form-control text-truncate title-input text-center" placeholder="Title"
         formControlName="title" />
     </div>
+  </div>
 
+  <div class="content-wrapper position-relative">
 
   </div>
 
+
   <div class="container-fluid px-0" style="width: 60%;">
 
-    <div class="toolbar d-flex flex-wrap align-items-center gap-1 p-2 border rounded mb-2 bg-light">
+    <div class="toolbar d-flex flex-wrap align-items-center gap-1 p-2 border rounded mb-2 bg-white">
       <button class="btn btn-sm btn-outline-secondary" [class.active]="isActive('bold')" (click)="toggleBold()"
         title="Bold">
         <i class="bi bi-type-bold"></i>
@@ -58,7 +60,9 @@
       </div>
     </div>
 
-    <div #editor class="editor bg-white"></div>
+
   </div>
+
+  <div #editor class="editor-container" (click)="focusEditor($event)"></div>
 
 </div>

@@ -25,53 +25,85 @@
   background-color: #f1f3f4;
 }
 
-.document-page-wrapper {
+////////////////////////////////////////////////////////////////
+
+
+.d-flex.flex-column.align-items-center.google-background.mt-3 {
+  min-height: 100vh;
+  overflow: hidden;  /* ✅ STOP page scroll */
+}
+
+.editor-container {
+  width: 60%;
+  flex: 1;
+  margin: 0 auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 4rem);
-  background-color: #f1f3f4;
-  align-items: center;
+  min-height: 500px;
+}
+
+.editor-container .ProseMirror {
+  flex: 1;
+  min-height: 0;        /* ✅ Required for flex scroll */
+  overflow-y: auto;     /* ✅ Editor scroll only */
+  overflow-x: hidden;
+  padding: 1.5rem;
 }
 
 
 
+@media (max-width: 768px) {
+  .editor-container {
+    width: 95%;
+  }
+}
+
+///////////////////////////////////////////////////
 
 
-// /* Remove the block highlight */
-// .y-caret {
-//   background-color: transparent !important;
-//   position: relative;
-// }
+.tiptap.ProseMirror {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 
-// /* The actual caret line */
-// .y-caret::after {
-//   content: '';
-//   position: absolute;
-//   left: 0;
-//   top: 0;
-//   width: 2px;
-//   height: 1.4em;
-//   background-color: var(--caret-color);
-//   pointer-events: none;
-// }
+.tiptap.ProseMirror:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 
-// /* Caret label (username bubble) */
-// .y-caret .caret-label {
-//   position: absolute;
-//   top: -1.6em;
-//   left: -1px;
-//   background-color: var(--caret-color);
-//   color: white;
-//   padding: 2px 6px;
-//   font-size: 11px;
-//   font-weight: 500;
-//   border-radius: 4px;
-//   white-space: nowrap;
-//   pointer-events: none;
-// }
+.tiptap.ProseMirror.ProseMirror-focused {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 
-// /* Optional: smooth animation */
-// .y-caret,
-// .y-caret::after {
-//   transition: all 0.15s ease;
-// }
+
+::ng-deep {
+  .tiptap.ProseMirror {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 1.5rem !important;
+    @media (max-width: 768px) {
+      padding: 1rem !important;
+    }
+  }
+  
+  .tiptap.ProseMirror:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .tiptap.ProseMirror.ProseMirror-focused {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
