@@ -1,7 +1,7 @@
 <div class="d-flex align-items-center gap-2 mx-3 mt-4 mb-3 justify-content-end">
   <div class="input-group" style="width:40%;">
-    <input type="text" class="form-control" placeholder="Search...">
-    <button class="btn btn-outline-primary" type="button" title="Search">
+    <input type="text" class="form-control" placeholder="Search..." [formControl]="searchControl">
+    <button class="btn btn-outline-primary" type="button" title="Search" (click)="search()">
       <i class="bi bi-search"></i>
     </button>
   </div>
@@ -40,7 +40,7 @@
               {{ document.title }}
             </div>
           </td>
-          <td>{{ document.lastSeenAt }}</td>
+          <td>{{ document.lastSeenAt | relativeTime}}</td>
           <td>
             {{ document?.user?.firstName }} {{ document?.user?.lastName }}
           </td>
