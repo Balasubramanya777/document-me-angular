@@ -17,7 +17,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { EditorComponent } from "../editor/editor.component";
 import { DocumentService } from "../../services/document.service";
 import { take } from "rxjs";
-import { ContentCreateDto, ContentDto } from "../../models/document.models";
+import { ContentCreateDto, ContentDto, DocumentUpsertDto } from "../../models/document.models";
 import { ApiResponse } from "../../../auth/models/api.response.model";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -95,23 +95,41 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
                     });
                 }
             }
-        })
+        });
 
-        // this.flushInterval = setInterval(() => {
-        //     if (this.pendingUpdates.length === 0) return
+        this.flushInterval = setInterval(() => this.flushNow(), 10000);
 
-        //     const payload: ContentCreateDto = {
-        //         documentId: this.documentId,
-        //         updates: this.pendingUpdates.map(u => this.uint8ToBase64(u))
-        //     }
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                this.flushNow();
+            }
+        });
+    }
 
-        //     this.documentService.createContent(payload).subscribe({
-        //         next: () => this.pendingUpdates = [],
-        //         error: err => {
-        //             console.error('ZZZ Faieled');
-        //         }
-        //     });
-        // }, 10000)
+    flushNow(): Promise<void> {
+        if (this.pendingUpdates.length === 0) return Promise.resolve();
+
+        const updatesToSend = this.pendingUpdates;
+        this.pendingUpdates = [];
+        const merged = Y.mergeUpdates(updatesToSend);
+
+        const payload: ContentCreateDto = {
+            documentId: this.documentId,
+            updates: [this.uint8ToBase64(merged)]
+        };
+
+        return new Promise((resolve) => {
+            this.documentService.createContent(payload).subscribe({
+                next: () => resolve(),
+                error: err => {
+                    console.error('Flush failed, requeueing updates');
+                    // put updates back in buffer
+                    this.pendingUpdates.unshift(...updatesToSend);
+                    resolve();
+                }
+            });
+        });
+
     }
 
     ngAfterViewInit(): void {
@@ -206,7 +224,8 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    back() {
+    async back() {
+        await this.flushNow();
         this.route.navigate(['/documents']);
     }
 
@@ -217,7 +236,30 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         } else {
             // Fallback if editor not initialized yet
             const proseMirror = this.editorEl.nativeElement.querySelector('.ProseMirror') as HTMLElement;
-    proseMirror?.focus();
+            proseMirror?.focus();
+        }
+    }
+
+    onTitleBlur() {
+        const title = this.form.controls['title'].value;
+        const control = this.form.get('title');
+
+        if (title !== null && title.trim() !== '') {
+            const payload: DocumentUpsertDto = {
+                documentId: this.documentId,
+                title: this.form.controls['title'].value
+            }
+            this.documentService.updateDocument(payload).subscribe({
+                next: () => {
+                    this.editor?.setEditable(true);
+                    control?.setErrors(null);
+                },
+                error: (err) => {
+                    this.editor?.setEditable(false);
+                    control?.setErrors({ errorMessage: err.error.message });
+                    control?.markAsTouched();
+                }
+            })
         }
     }
 }

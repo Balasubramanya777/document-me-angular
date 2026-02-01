@@ -6,13 +6,16 @@
       <i class="bi bi-arrow-left fs-6"></i>
     </button>
 
-    <div [formGroup]="form" class="shadow-sm px-4 py-2 bg-white rounded title-page d-flex" style="width: 60%;">
-      <input #titleInput type="text" class="form-control text-truncate title-input text-center" placeholder="Title"
-        formControlName="title" />
-    </div>
-  </div>
+    <div [formGroup]="form" style="width: 60%;">
+      <input #titleInput type="text" class="form-control text-truncate text-center shadow-sm px-4 py-2 bg-white rounded"
+        placeholder="Title" formControlName="title" (blur)="onTitleBlur()"
+        [class.is-invalid]="form.controls['title'].touched && form.controls['title'].invalid" />
 
-  <div class="content-wrapper position-relative">
+      <div class="invalid-feedback text-center">
+        {{ form.controls['title'].errors?.['errorMessage'] }}
+      </div>
+
+    </div>
 
   </div>
 
@@ -59,8 +62,6 @@
         {{ charCount }} chars • {{ wordCount }} words
       </div>
     </div>
-
-
   </div>
 
   <div #editor class="editor-container" (click)="focusEditor($event)"></div>
