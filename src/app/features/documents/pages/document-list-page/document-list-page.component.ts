@@ -52,7 +52,7 @@ export class DocumentListPage {
 
 
     create() {
-        this.documentService.upsertDocument().subscribe({
+        this.documentService.createDocument().subscribe({
             next: (res: ApiResponse<DocumentUpsertDto>) => {
                 if (res.success) {
                     this.route.navigate(['/documents', res.data.documentId]);

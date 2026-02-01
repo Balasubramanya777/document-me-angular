@@ -21,9 +21,14 @@ export class DocumentService {
             .get<ApiResponse<DocumentUserDto[]>>(`${this.baseUrl}?title=${title}`);
     }
 
-    upsertDocument(): Observable<ApiResponse<DocumentUpsertDto>> {
+    createDocument(): Observable<ApiResponse<DocumentUpsertDto>> {
         return this.http
             .post<ApiResponse<DocumentUpsertDto>>(`${this.baseUrl}`, null);
+    }
+
+    updateDocument(documentUpsertDto: DocumentUpsertDto): Observable<ApiResponse<DocumentUpsertDto>> {
+        return this.http
+            .patch<ApiResponse<DocumentUpsertDto>>(`${this.baseUrl}`, documentUpsertDto);
     }
 
     createContent(contentDto: ContentCreateDto): Observable<ApiResponse<boolean>> {
