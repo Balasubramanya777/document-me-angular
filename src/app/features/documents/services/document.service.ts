@@ -16,9 +16,9 @@ export class DocumentService {
     private titleSubject = new BehaviorSubject<string | null>(null);
     title$ = this.titleSubject.asObservable();
 
-    getDocuments(): Observable<ApiResponse<DocumentUserDto[]>> {
+    getDocuments(title?: string): Observable<ApiResponse<DocumentUserDto[]>> {
         return this.http
-            .get<ApiResponse<DocumentUserDto[]>>(`${this.baseUrl}`);
+            .get<ApiResponse<DocumentUserDto[]>>(`${this.baseUrl}?title=${title}`);
     }
 
     upsertDocument(): Observable<ApiResponse<DocumentUpsertDto>> {
