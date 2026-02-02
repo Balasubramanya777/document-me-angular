@@ -7,7 +7,7 @@
     </button>
 
     <div [formGroup]="form" style="width: 60%;">
-      <input #titleInput type="text" class="form-control text-truncate text-center shadow-sm px-4 py-2 bg-white rounded"
+      <input #titleInput type="text" class="form-control text-truncate text-center shadow-sm px-4 py-2 bg-white rounded fw-bold"
         placeholder="Title" formControlName="title" (blur)="onTitleBlur()"
         [class.is-invalid]="form.controls['title'].touched && form.controls['title'].invalid" />
 
