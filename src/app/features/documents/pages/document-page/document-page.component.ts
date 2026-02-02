@@ -14,9 +14,7 @@ import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 import { HocuspocusProvider } from '@hocuspocus/provider'
 import { ActivatedRoute, Router } from "@angular/router";
-import { EditorComponent } from "../editor/editor.component";
 import { DocumentService } from "../../services/document.service";
-import { take } from "rxjs";
 import { ContentCreateDto, ContentDto, DocumentUpsertDto } from "../../models/document.models";
 import { ApiResponse } from "../../../auth/models/api.response.model";
 import { MatIconModule } from "@angular/material/icon";
@@ -24,11 +22,10 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatDividerModule } from '@angular/material/divider';
 
 
-
 @Component({
     selector: 'document-page',
     standalone: true,
-    imports: [FormsModule, EditorComponent, ReactiveFormsModule, MatIconModule, MatToolbarModule, MatDividerModule],
+    imports: [FormsModule, ReactiveFormsModule, MatIconModule, MatToolbarModule, MatDividerModule],
     templateUrl: './document-page.component.html',
     styleUrls: ['./document-page.component.scss']
 })
