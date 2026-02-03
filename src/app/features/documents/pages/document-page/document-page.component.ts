@@ -42,6 +42,9 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
 
     charCount: number = 0;
     wordCount: number = 0;
+    private totalUpdateCount = 0;
+    private totalUpdateSize = 0;
+    private flushing = false;
 
     private activatedRoute = inject(ActivatedRoute)
     private route = inject(Router);
@@ -57,7 +60,6 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
     ngOnInit(): void {
         const idParam = this.activatedRoute.snapshot.paramMap.get('id');
         if (!idParam) {
-            console.error("No idddd");
             this.route.navigate(['/documents']);
             return;
         }
@@ -75,6 +77,8 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         this.ydoc.on('update', (update: Uint8Array, origin) => {
             if (origin === this.provider) return;
             this.pendingUpdates.push(update);
+            this.totalUpdateCount++;
+            this.totalUpdateSize += update.byteLength;
         });
 
 
@@ -86,7 +90,12 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
                         title: res.data.title
                     });
 
-                    res.data.updates.forEach(arr => {
+                    if (res.data.snapshot) {
+                        const snapshotBinary = Uint8Array.from(atob(res.data.snapshot), c => c.charCodeAt(0));
+                        Y.applyUpdate(this.ydoc, snapshotBinary);
+                    }
+
+                    res.data.updates?.forEach(arr => {
                         const binary = Uint8Array.from(atob(arr), x => x.charCodeAt(0));
                         Y.applyUpdate(this.ydoc, binary);
                     });
@@ -104,29 +113,67 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     flushNow(): Promise<void> {
-        if (this.pendingUpdates.length === 0) return Promise.resolve();
+        if (this.flushing || this.pendingUpdates.length === 0) return Promise.resolve();
 
+        this.flushing = true;
         const updatesToSend = this.pendingUpdates;
         this.pendingUpdates = [];
-        const merged = Y.mergeUpdates(updatesToSend);
 
-        const payload: ContentCreateDto = {
-            documentId: this.documentId,
-            updates: [this.uint8ToBase64(merged)]
-        };
+        const mergedUpdates = Y.mergeUpdates(updatesToSend);
+        const createSnapshot = this.shouldCreateSnapshot();
+
+        let payload: ContentCreateDto;
+
+        if (createSnapshot) {
+            payload = {
+                documentId: this.documentId,
+                snapshot: this.createSnapshot()
+            };
+        } else {
+            payload = {
+                documentId: this.documentId,
+                updates: [this.uint8ToBase64(mergedUpdates)]
+            };
+        }
 
         return new Promise((resolve) => {
             this.documentService.createContent(payload).subscribe({
-                next: () => resolve(),
+                next: () => {
+                    if (createSnapshot) {
+                        this.totalUpdateCount = 0;
+                        this.totalUpdateSize = 0;
+                        this.pendingUpdates = [];
+                    }
+                    this.flushing = false;
+                    resolve();
+                }
+                ,
                 error: err => {
-                    console.error('Flush failed, requeueing updates');
-                    // put updates back in buffer
+                    //ROLLBACK -> put updates back in buffer
                     this.pendingUpdates.unshift(...updatesToSend);
+
+                    // rollback counters
+                    updatesToSend.forEach(u => {
+                        this.totalUpdateCount--;
+                        this.totalUpdateSize -= u.byteLength;
+                    });
+                    this.flushing = false;
                     resolve();
                 }
             });
         });
+    }
 
+    private shouldCreateSnapshot(): boolean {
+        return (
+            this.totalUpdateCount >= 50 ||
+            this.totalUpdateSize >= 1024 * 1024 // 1 MB
+        );
+    }
+
+    private createSnapshot(): string {
+        const fullState = Y.encodeStateAsUpdate(this.ydoc);
+        return this.uint8ToBase64(fullState);
     }
 
     ngAfterViewInit(): void {
@@ -213,6 +260,7 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.flushNow();
         this.editor?.destroy();
         this.provider?.destroy();
         this.ydoc?.destroy();
