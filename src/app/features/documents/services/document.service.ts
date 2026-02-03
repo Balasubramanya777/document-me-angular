@@ -1,10 +1,11 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpContext } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs/internal/Observable";
 import { ApiResponse } from "../../auth/models/api.response.model";
 import { ContentCreateDto, ContentDto, DocumentUpsertDto, DocumentUserDto } from "../models/document.models";
 import { environment } from "../../../../environments/environment";
 import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
+import { SKIP_LOADER } from "../../../core/http-context/loader.context";
 
 
 @Injectable({ providedIn: 'root' })
@@ -28,12 +29,12 @@ export class DocumentService {
 
     updateDocument(documentUpsertDto: DocumentUpsertDto): Observable<ApiResponse<DocumentUpsertDto>> {
         return this.http
-            .patch<ApiResponse<DocumentUpsertDto>>(`${this.baseUrl}`, documentUpsertDto);
+            .patch<ApiResponse<DocumentUpsertDto>>(`${this.baseUrl}`, documentUpsertDto, {context: new HttpContext().set(SKIP_LOADER, true)});
     }
 
     createContent(contentDto: ContentCreateDto): Observable<ApiResponse<boolean>> {
         return this.http
-            .post<ApiResponse<boolean>>(`${this.baseUrl}/content`, contentDto)
+            .post<ApiResponse<boolean>>(`${this.baseUrl}/content`, contentDto, {context: new HttpContext().set(SKIP_LOADER, true)})
     }
 
     getContent(documentId: number):Observable<ApiResponse<ContentDto>>{

@@ -7,8 +7,6 @@ import { catchError, map, of, startWith, Subject, switchMap } from 'rxjs';
 import { Router } from "@angular/router";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { RelativeTimePipe } from "../../../../shared/pipes/relative-time.pipe";
-import { LoaderService } from "../../../../shared/components/loader/loader.service";
-
 
 @Component({
     selector: 'document-list-page',
@@ -19,7 +17,6 @@ import { LoaderService } from "../../../../shared/components/loader/loader.servi
 })
 export class DocumentListPage {
 
-    private loader = inject(LoaderService);
     private documentService = inject(DocumentService);
     private route = inject(Router);
     private searchClick$ = new Subject<void>();
@@ -48,7 +45,7 @@ export class DocumentListPage {
                 }
             }
         });
-        
+
     }
 
     edit(documentId: number) {

@@ -14,11 +14,13 @@ export interface DocumentUserDto {
 
 export interface ContentCreateDto {
     documentId: number
-    updates: string[]
+    updates?: string[]
+    snapshot?: string
 }
 
 export interface ContentDto{
     documentId: number
     title: string
-    updates: string[]
+    updates?: string[]
+    snapshot?: string
 }
