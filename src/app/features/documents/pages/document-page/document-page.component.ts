@@ -39,6 +39,7 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
     private pendingUpdates!: Uint8Array[];
     private flushInterval!: number
     private documentId!: number;
+    private snapshotStateVector?: Uint8Array;
 
     charCount: number = 0;
     wordCount: number = 0;
@@ -75,7 +76,7 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         });
 
         this.ydoc.on('update', (update: Uint8Array, origin) => {
-            if (origin === this.provider) return;
+            if (origin === this.provider || origin === 'snapshot') return;
             this.pendingUpdates.push(update);
             this.totalUpdateCount++;
             this.totalUpdateSize += update.byteLength;
@@ -91,13 +92,14 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
                     });
 
                     if (res.data.snapshot) {
-                        const snapshotBinary = Uint8Array.from(atob(res.data.snapshot), c => c.charCodeAt(0));
-                        Y.applyUpdate(this.ydoc, snapshotBinary);
+                        const snapshotBinary = this.base64ToUint8(res.data.snapshot);
+                        Y.applyUpdate(this.ydoc, snapshotBinary, 'snapshot');
+                        this.snapshotStateVector = Y.encodeStateVector(this.ydoc);
                     }
 
                     res.data.updates?.forEach(arr => {
-                        const binary = Uint8Array.from(atob(arr), x => x.charCodeAt(0));
-                        Y.applyUpdate(this.ydoc, binary);
+                        const binary = this.base64ToUint8(arr);
+                        Y.applyUpdate(this.ydoc, binary, 'snapshot');
                     });
                 }
             }
@@ -112,6 +114,50 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
+    ngAfterViewInit(): void {
+
+        //Tiptap
+        this.editor = new Editor({
+            element: this.editorEl.nativeElement,
+            extensions: [
+                StarterKit.configure({ history: false } as any),
+                Collaboration.configure({ document: this.ydoc }),
+                // CollaborationCaret.configure({
+                //     provider: this.provider,
+                //     user: {
+                //         // name: 'Arjun Reddy',
+                //         color: '#0d6efd',
+                //     },
+                // }),
+                Underline,
+                Highlight,
+                CharacterCount,
+                Placeholder.configure({ placeholder: 'Start typing…' }),
+                Focus.configure({ className: 'has-focus', mode: 'all' }),
+            ],
+            onUpdate: ({ editor }) => {
+                this.updateCounts(editor);
+            },
+        });
+
+        this.editor.view.dispatch(this.editor.state.tr);
+        this.updateCounts(this.editor);
+    }
+
+    ngOnDestroy(): void {
+        this.flushNow();
+        this.editor?.destroy();
+        this.provider?.destroy();
+        this.ydoc?.destroy();
+        if (this.flushInterval) {
+            clearInterval(this.flushInterval)
+        }
+    }
+
+    private base64ToUint8(b64: string): Uint8Array {
+        return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    }
+
     flushNow(): Promise<void> {
         if (this.flushing || this.pendingUpdates.length === 0) return Promise.resolve();
 
@@ -119,27 +165,28 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         const updatesToSend = this.pendingUpdates;
         this.pendingUpdates = [];
 
-        const mergedUpdates = Y.mergeUpdates(updatesToSend);
-        const createSnapshot = this.shouldCreateSnapshot();
+        const shouldSnapshot = this.shouldCreateSnapshot();
 
         let payload: ContentCreateDto;
 
-        if (createSnapshot) {
+        if (shouldSnapshot) {
             payload = {
                 documentId: this.documentId,
                 snapshot: this.createSnapshot()
             };
         } else {
+            const diff = this.snapshotStateVector ? Y.encodeStateAsUpdate(this.ydoc, this.snapshotStateVector) : Y.mergeUpdates(updatesToSend);
             payload = {
                 documentId: this.documentId,
-                updates: [this.uint8ToBase64(mergedUpdates)]
+                // updates: [this.uint8ToBase64(mergedUpdates)]
+                updates: [this.uint8ToBase64(diff)]
             };
         }
 
         return new Promise((resolve) => {
             this.documentService.createContent(payload).subscribe({
                 next: () => {
-                    if (createSnapshot) {
+                    if (shouldSnapshot) {
                         this.totalUpdateCount = 0;
                         this.totalUpdateSize = 0;
                         this.pendingUpdates = [];
@@ -173,46 +220,8 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
 
     private createSnapshot(): string {
         const fullState = Y.encodeStateAsUpdate(this.ydoc);
+        this.snapshotStateVector = Y.encodeStateVector(this.ydoc);
         return this.uint8ToBase64(fullState);
-    }
-
-    ngAfterViewInit(): void {
-
-        //Tiptap
-        this.editor = new Editor({
-            element: this.editorEl.nativeElement,
-            extensions: [
-                StarterKit.configure({
-                    history: false,
-                } as any),
-                Collaboration.configure({
-                    document: this.ydoc,
-                }),
-                // CollaborationCaret.configure({
-                //     provider: this.provider,
-                //     user: {
-                //         // name: 'Arjun Reddy',
-                //         color: '#0d6efd',
-                //     },
-                // }),
-                Underline,
-                Highlight,
-                CharacterCount,
-                Placeholder.configure({
-                    placeholder: 'Start typing…',
-                }),
-                Focus.configure({
-                    className: 'has-focus',
-                    mode: 'all',
-                }),
-            ],
-            onUpdate: ({ editor }) => {
-                this.updateCounts(editor);
-            },
-        });
-
-        this.editor.view.dispatch(this.editor.state.tr);
-        this.updateCounts(this.editor);
     }
 
     toggleBold() {
@@ -257,16 +266,6 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         let binary = '';
         bytes.forEach(b => binary += String.fromCharCode(b))
         return btoa(binary)
-    }
-
-    ngOnDestroy(): void {
-        this.flushNow();
-        this.editor?.destroy();
-        this.provider?.destroy();
-        this.ydoc?.destroy();
-        if (this.flushInterval) {
-            clearInterval(this.flushInterval)
-        }
     }
 
     async back() {
