@@ -20,6 +20,7 @@ import { ApiResponse } from "../../../auth/models/api.response.model";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatDividerModule } from '@angular/material/divider';
+import { environment } from "../../../../../environments/environment";
 
 
 @Component({
@@ -70,7 +71,7 @@ export class DocumentPage implements OnInit, AfterViewInit, OnDestroy {
         this.pendingUpdates = []
 
         this.provider = new HocuspocusProvider({
-            url: 'ws://localhost:1234',
+            url: environment.hocuspocusUrl,
             name: `doc-me-${this.documentId}`,
             document: this.ydoc
         });
