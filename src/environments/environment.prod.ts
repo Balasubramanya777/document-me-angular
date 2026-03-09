@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: '__API_BASE_URL__',
-  hocuspocusUrl: '__HOCUSPOCUS_URL__'
+  apiBaseUrl: 'API_BASE_URL',
+  hocuspocusUrl: 'HOCUSPOCUS_URL'
 };
