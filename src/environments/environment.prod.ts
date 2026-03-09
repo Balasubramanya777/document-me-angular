@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.mydomain.com/api',
-  hocuspocusUrl: 'wss://realtime.mydomain.com'
+  apiBaseUrl: '__API_BASE_URL__',
+  hocuspocusUrl: '__HOCUSPOCUS_URL__'
 };
