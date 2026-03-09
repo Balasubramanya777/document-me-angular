@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'API_BASE_URL',
-  hocuspocusUrl: 'HOCUSPOCUS_URL'
+  apiBaseUrl: 'https://document-me-net.vercel.app/',
+  hocuspocusUrl: 'https://document-me-hocuspocus.onrender.com'
 };
